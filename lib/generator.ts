@@ -136,6 +136,7 @@ export async function generateModelsAsync(config: IGenerateModelsConfig): Promis
                 taxonomies: taxonomies,
                 snippets: snippets,
                 addTimestamp: config.addTimestamp,
+                browserModuleResolution: config.browserModuleResolution,
                 formatOptions: config.formatOptions,
                 elementResolver: config.elementResolver,
                 contentTypeFileNameResolver: config.contentTypeFileResolver,
@@ -183,10 +184,11 @@ export async function generateModelsAsync(config: IGenerateModelsConfig): Promis
                 filenames: [
                     ...contentTypesResult.contentTypeFilenames.map((m) => {
                         const path = parse(m);
-                        return `./${path.name}`;
+                        return `./${path.name}${config.browserModuleResolution ? path.ext : ''}`;
                     })
                 ],
-                formatOptions: config.formatOptions
+                formatOptions: config.formatOptions,
+                addExtension: config.browserModuleResolution
             });
             const contentTypeBarrelExportPath: string = `${contentTypesFolderPath}${barrelExportFilename}`;
             fs.writeFileSync(contentTypeBarrelExportPath, contentTypeBarrelCode);
@@ -197,10 +199,11 @@ export async function generateModelsAsync(config: IGenerateModelsConfig): Promis
                 filenames: [
                     ...contentTypesResult.contentTypeSnippetFilenames.map((m) => {
                         const path = parse(m);
-                        return `./${path.name}`;
+                        return `./${path.name}${config.browserModuleResolution ? path.ext : ''}`;
                     })
                 ],
-                formatOptions: config.formatOptions
+                formatOptions: config.formatOptions,
+                addExtension: config.browserModuleResolution
             });
             const contentTypeSnippetsBarrelExportPath: string = `${contentTypeSnippetsFolderPath}${barrelExportFilename}`;
             fs.writeFileSync(contentTypeSnippetsBarrelExportPath, contentTypeSnippetsBarrelCode);
@@ -211,10 +214,11 @@ export async function generateModelsAsync(config: IGenerateModelsConfig): Promis
                 filenames: [
                     ...taxonomiesResult.taxonomyFilenames.map((m) => {
                         const path = parse(m);
-                        return `./${path.name}`;
+                        return `./${path.name}${config.browserModuleResolution ? path.ext : ''}`;
                     })
                 ],
-                formatOptions: config.formatOptions
+                formatOptions: config.formatOptions,
+                addExtension: config.browserModuleResolution
             });
             const taxonomiesBarrelExportPath: string = `${taxonomiesFolderPath}${barrelExportFilename}`;
             fs.writeFileSync(taxonomiesBarrelExportPath, taxonomiesBarrelCode);
@@ -225,24 +229,27 @@ export async function generateModelsAsync(config: IGenerateModelsConfig): Promis
                 filenames: [
                     ...projectModelResult.filenames.map((m) => {
                         const path = parse(m);
-                        return `./${path.name}`;
+                        return `./${path.name}${config.browserModuleResolution ? path.ext : ''}`;
                     })
                 ],
-                formatOptions: config.formatOptions
+                formatOptions: config.formatOptions,
+                addExtension: config.browserModuleResolution
             });
             const projectBarrelExportPath: string = `${projectFolderPath}${barrelExportFilename}`;
             fs.writeFileSync(projectBarrelExportPath, projectBarrelCode);
             console.log(`Barrel export '${yellow(projectBarrelExportPath)}' created`);
 
             // main barrel
+            const optionalIndexFileName = config.browserModuleResolution ? 'index.ts' : '';
             const mainBarrelCode = commonHelper.getBarrelExportCode({
                 filenames: [
-                    `./${projectFolderName}`,
-                    `./${contentTypesFolderName}`,
-                    `./${contentTypeSnippetsFolderName}`,
-                    `./${taxonomiesFolderName}`
+                    `./${projectFolderName}${optionalIndexFileName}`,
+                    `./${contentTypesFolderName}${optionalIndexFileName}`,
+                    `./${contentTypeSnippetsFolderName}${optionalIndexFileName}`,
+                    `./${taxonomiesFolderName}${optionalIndexFileName}`
                 ],
-                formatOptions: config.formatOptions
+                formatOptions: config.formatOptions,
+                addExtension: config.browserModuleResolution
             });
             const mainBarrelExportPath: string = `${outputDir}${barrelExportFilename}`;
             fs.writeFileSync(mainBarrelExportPath, mainBarrelCode);

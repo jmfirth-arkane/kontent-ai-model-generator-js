@@ -69,6 +69,7 @@ export class DeliveryContentTypeGenerator {
         taxonomies: TaxonomyModels.Taxonomy[];
         snippets: ContentTypeSnippetModels.ContentTypeSnippet[];
         addTimestamp: boolean;
+        browserModuleResolution: boolean;
         elementResolver?: ElementResolver;
         contentTypeFileNameResolver?: ContentTypeFileNameResolver;
         contentTypeSnippetFileNameResolver?: ContentTypeSnippetFileNameResolver;
@@ -159,6 +160,7 @@ export class DeliveryContentTypeGenerator {
                     taxonomyFileNameMap: getMapTaxonomyToFileName(data.taxonomyFileResolver),
                     taxonomyObjectMap: getMapTaxonomyIdTobject(data.taxonomies),
                     addTimestamp: data.addTimestamp,
+                    browserModuleResolution: data.browserModuleResolution,
                     formatOptions: data.formatOptions
                 });
                 contentTypeSnippetFilenames.push(filename);
@@ -195,6 +197,7 @@ export class DeliveryContentTypeGenerator {
                     taxonomyFileNameMap: getMapTaxonomyToFileName(data.taxonomyFileResolver),
                     taxonomyObjectMap: getMapTaxonomyIdTobject(data.taxonomies),
                     addTimestamp: data.addTimestamp,
+                    browserModuleResolution: data.browserModuleResolution,
                     formatOptions: data.formatOptions
                 });
                 contentTypeFilenames.push(filename);
@@ -227,6 +230,7 @@ export class DeliveryContentTypeGenerator {
         typeFolderName: string;
         typeSnippetsFolderName: string;
         taxonomyFolderName: string;
+        browserModuleResolution: boolean;
     }): IExtractImportsResult {
         const imports: string[] = [];
         const contentTypeSnippetExtensions: string[] = [];
@@ -260,7 +264,7 @@ export class DeliveryContentTypeGenerator {
                 processedTaxonomyIds.push(taxonomy.id);
 
                 const taxonomyName: string = data.taxonomyNameMap(taxonomy);
-                const fileName: string = `../${data.taxonomyFolderName}${data.taxonomyFileNameMap(taxonomy, false)}`;
+                const fileName: string = `../${data.taxonomyFolderName}${data.taxonomyFileNameMap(taxonomy, data.browserModuleResolution)}`;
 
                 imports.push(`import { type ${taxonomyName} } from '${fileName}';`);
             } else if (element.type === 'modular_content' || element.type === 'subpages') {
@@ -281,7 +285,7 @@ export class DeliveryContentTypeGenerator {
                     processedTypeIds.push(referencedType.id);
 
                     const typeName: string = data.contentTypeNameMap(referencedType);
-                    const fileName: string = `${data.contentTypeFileNameMap(referencedType, false)}`;
+                    const fileName: string = `${data.contentTypeFileNameMap(referencedType, data.browserModuleResolution)}`;
 
                     const filePath: string = data.contentTypeSnippet
                         ? `../${data.typeFolderName}${fileName}`
@@ -295,7 +299,7 @@ export class DeliveryContentTypeGenerator {
                 const typeName: string = data.contentTypeSnippetNameMap(contentTypeSnipped);
                 const filePath: string = `../${data.typeSnippetsFolderName}${data.contentTypeSnippetFileNameMap(
                     contentTypeSnipped,
-                    false
+                    data.browserModuleResolution
                 )}`;
 
                 imports.push(`import { type ${typeName} } from '${filePath}';`);
@@ -329,6 +333,7 @@ export class DeliveryContentTypeGenerator {
         typeSnippetsFolderName: string;
         taxonomyFolderName: string;
         addTimestamp: boolean;
+        browserModuleResolution: boolean;
         formatOptions?: Options;
     }): string {
         const importResult = this.getContentTypeImports({
@@ -347,7 +352,8 @@ export class DeliveryContentTypeGenerator {
             contentTypeSnippet: data.contentTypeSnippet,
             typeFolderName: data.typeFolderName,
             typeSnippetsFolderName: data.typeSnippetsFolderName,
-            taxonomyFolderName: data.taxonomyFolderName
+            taxonomyFolderName: data.taxonomyFolderName,
+            browserModuleResolution: data.browserModuleResolution,
         });
 
         const topLevelImports: string[] = ['type IContentItem'];
@@ -433,6 +439,7 @@ export type ${typeName} = IContentItem<{
         taxonomyFileNameMap: MapTaxonomyToFileName;
         snippets: ContentTypeSnippetModels.ContentTypeSnippet[];
         addTimestamp: boolean;
+        browserModuleResolution: boolean;
         formatOptions?: Options;
     }): string {
         const filename: string = `${data.outputDir}${data.typeFolderName}${data.contentTypeFileNameMap(
@@ -454,11 +461,12 @@ export type ${typeName} = IContentItem<{
             typeSnippetsFolderName: data.typeSnippetsFolderName,
             taxonomyFolderName: data.taxonomyFolderName,
             addTimestamp: data.addTimestamp,
+            browserModuleResolution: data.browserModuleResolution,
             formatOptions: data.formatOptions,
             elementNameMap: data.elementNameMap,
             taxonomyFileNameMap: data.taxonomyFileNameMap,
             taxonomyNameMap: data.taxonomyNameMap,
-            taxonomyObjectMap: data.taxonomyObjectMap
+            taxonomyObjectMap: data.taxonomyObjectMap,
         });
         fs.writeFileSync(filename, code);
         console.log(`Created '${yellow(filename)}'`);
@@ -484,6 +492,7 @@ export type ${typeName} = IContentItem<{
         taxonomyFileNameMap: MapTaxonomyToFileName;
         snippets: ContentTypeSnippetModels.ContentTypeSnippet[];
         addTimestamp: boolean;
+        browserModuleResolution: boolean;
         formatOptions?: Options;
     }): string {
         const filename: string = `${data.outputDir}${data.typeSnippetsFolderName}${data.contentTypeSnippetFileNameMap(
@@ -505,6 +514,7 @@ export type ${typeName} = IContentItem<{
             typeSnippetsFolderName: data.typeSnippetsFolderName,
             taxonomyFolderName: data.taxonomyFolderName,
             addTimestamp: data.addTimestamp,
+            browserModuleResolution: data.browserModuleResolution,
             formatOptions: data.formatOptions,
             elementNameMap: data.elementNameMap,
             taxonomyFileNameMap: data.taxonomyFileNameMap,

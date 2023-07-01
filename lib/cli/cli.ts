@@ -17,6 +17,8 @@ const argv = yargs(process.argv.slice(2))
     .describe('o', 'Directory where generated files will be created')
     .alias('a', 'addTimestamp')
     .describe('a', 'Indicates if timestamp should be generated')
+    .alias('b', 'browserModuleResolution')
+    .describe('b', 'Supports browser module resolution by fully specifying path to filename with extension')
     .alias('t', 'sdkType')
     .describe('t', 'Type of sdk for which models are generated. Available options are: delivery')
     .option('exportLanguages', {
@@ -71,6 +73,7 @@ const run = async () => {
     const apiKey = resolvedArgs.apiKey;
     const outputDir = resolvedArgs.outputDir;
     const addTimestamp = resolvedArgs.addTimestamp;
+    const browserModuleResolution = resolvedArgs.browserModuleResolution;
     const elementResolver = resolvedArgs.elementResolver;
     const contentTypeFileResolver = resolvedArgs.contentTypeFileResolver;
     const contentTypeSnippetFileResolver = resolvedArgs.contentTypeSnippetFileResolver;
@@ -97,6 +100,7 @@ const run = async () => {
         outputDir: outputDir,
         isEnterpriseSubscription: isEnterpriseSubscription,
         addTimestamp: addTimestamp === 'true' ? true : false,
+        browserModuleResolution: browserModuleResolution === 'true' ? true : false,
         elementResolver: elementResolver,
         contentTypeFileResolver: contentTypeFileResolver,
         contentTypeResolver: contentTypeResolver,

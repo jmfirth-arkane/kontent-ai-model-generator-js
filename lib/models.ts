@@ -28,6 +28,7 @@ export interface IExportProjectSettings {
 export interface IGenerateModelsConfig {
     environmentId: string;
     addTimestamp: boolean;
+    browserModuleResolution: boolean;
     outputDir?: string;
     isEnterpriseSubscription: boolean;
     sdkType: SdkType;

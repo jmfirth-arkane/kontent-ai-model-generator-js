@@ -77,7 +77,7 @@ export class CommonHelper {
         return (<any>element)['name'];
     }
 
-    getBarrelExportCode(data: { filenames: string[]; formatOptions?: Options }): string {
+    getBarrelExportCode(data: { filenames: string[]; formatOptions?: Options; addExtension: boolean; }): string {
         let code = '';
 
         if (data.filenames.length) {
@@ -85,7 +85,7 @@ export class CommonHelper {
                 const isLast = i === data.filenames.length - 1;
                 const filename = data.filenames[i];
                 const path = parse(filename);
-                code += `export * from '${path.dir}/${path.name}'`;
+                code += `export * from '${path.dir}/${path.name}${data.addExtension ? path.ext : ''}'`;
 
                 if (!isLast) {
                     code += `\n`;
