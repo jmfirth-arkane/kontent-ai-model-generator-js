@@ -6,6 +6,8 @@ export type DefaultResolverType = 'camelCase' | 'pascalCase' | 'snakeCase';
 
 export type SdkType = 'delivery' | 'management';
 
+export type ModuleResolutionStrategy = 'node' | 'browser';
+
 export type ElementResolver = DefaultResolverType | PropertyNameResolver;
 
 export type ContentTypeFileNameResolver = DefaultResolverType | ((contentType: ContentTypeModels.ContentType) => string);
@@ -28,7 +30,6 @@ export interface IExportProjectSettings {
 export interface IGenerateModelsConfig {
     environmentId: string;
     addTimestamp: boolean;
-    browserModuleResolution: boolean;
     outputDir?: string;
     isEnterpriseSubscription: boolean;
     sdkType: SdkType;
@@ -48,4 +49,5 @@ export interface IGenerateModelsConfig {
     taxonomyTypeResolver?: TaxonomyTypeResolver;
     elementResolver?: ElementResolver;
     formatOptions?: Options;
+    moduleResolution: ModuleResolutionStrategy;
 }

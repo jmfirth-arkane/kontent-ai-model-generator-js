@@ -17,8 +17,6 @@ const argv = yargs(process.argv.slice(2))
     .describe('o', 'Directory where generated files will be created')
     .alias('a', 'addTimestamp')
     .describe('a', 'Indicates if timestamp should be generated')
-    .alias('b', 'browserModuleResolution')
-    .describe('b', 'Supports browser module resolution by fully specifying path to filename with extension')
     .alias('t', 'sdkType')
     .describe('t', 'Type of sdk for which models are generated. Available options are: delivery')
     .option('exportLanguages', {
@@ -62,6 +60,9 @@ const argv = yargs(process.argv.slice(2))
     .option('isEnterpriseSubscription', {
         description: 'Indicates if enterprise subscription endpoint can be used to export data.'
     })
+    .option('moduleResolution', {
+        description: 'Module resolution strategy.  Available options are: node (default), browser'
+    })
     .help('h')
     .alias('h', 'help').argv;
 
@@ -73,7 +74,6 @@ const run = async () => {
     const apiKey = resolvedArgs.apiKey;
     const outputDir = resolvedArgs.outputDir;
     const addTimestamp = resolvedArgs.addTimestamp;
-    const browserModuleResolution = resolvedArgs.browserModuleResolution;
     const elementResolver = resolvedArgs.elementResolver;
     const contentTypeFileResolver = resolvedArgs.contentTypeFileResolver;
     const contentTypeSnippetFileResolver = resolvedArgs.contentTypeSnippetFileResolver;
@@ -89,6 +89,7 @@ const run = async () => {
     const exportLanguages =  !resolvedArgs.exportLanguages ? true :  resolvedArgs.exportLanguages === 'true';
     const exportRoles = !resolvedArgs.exportRoles ? true :  resolvedArgs.exportRoles === 'true';
     const isEnterpriseSubscription = !resolvedArgs.isEnterpriseSubscription ? true :  resolvedArgs.isEnterpriseSubscription === 'true';
+    const moduleResolution = resolvedArgs.moduleResolution;
 
     if (!environmentId) {
         throw Error(`Please provide environment id using 'environmentId' argument`);
@@ -100,7 +101,7 @@ const run = async () => {
         outputDir: outputDir,
         isEnterpriseSubscription: isEnterpriseSubscription,
         addTimestamp: addTimestamp === 'true' ? true : false,
-        browserModuleResolution: browserModuleResolution === 'true' ? true : false,
+        moduleResolution: moduleResolution,
         elementResolver: elementResolver,
         contentTypeFileResolver: contentTypeFileResolver,
         contentTypeResolver: contentTypeResolver,

@@ -136,7 +136,7 @@ export async function generateModelsAsync(config: IGenerateModelsConfig): Promis
                 taxonomies: taxonomies,
                 snippets: snippets,
                 addTimestamp: config.addTimestamp,
-                browserModuleResolution: config.browserModuleResolution,
+                moduleResolution: config.moduleResolution,
                 formatOptions: config.formatOptions,
                 elementResolver: config.elementResolver,
                 contentTypeFileNameResolver: config.contentTypeFileResolver,
@@ -178,17 +178,18 @@ export async function generateModelsAsync(config: IGenerateModelsConfig): Promis
 
             // create barrel export
             const barrelExportFilename: string = 'index.ts';
+            const addExtension = config.moduleResolution === 'browser';
 
             // content types barrel
             const contentTypeBarrelCode = commonHelper.getBarrelExportCode({
                 filenames: [
                     ...contentTypesResult.contentTypeFilenames.map((m) => {
                         const path = parse(m);
-                        return `./${path.name}${config.browserModuleResolution ? path.ext : ''}`;
+                        return `./${path.name}${addExtension ? path.ext : ''}`;
                     })
                 ],
                 formatOptions: config.formatOptions,
-                addExtension: config.browserModuleResolution
+                addExtension
             });
             const contentTypeBarrelExportPath: string = `${contentTypesFolderPath}${barrelExportFilename}`;
             fs.writeFileSync(contentTypeBarrelExportPath, contentTypeBarrelCode);
@@ -199,11 +200,11 @@ export async function generateModelsAsync(config: IGenerateModelsConfig): Promis
                 filenames: [
                     ...contentTypesResult.contentTypeSnippetFilenames.map((m) => {
                         const path = parse(m);
-                        return `./${path.name}${config.browserModuleResolution ? path.ext : ''}`;
+                        return `./${path.name}${addExtension ? path.ext : ''}`;
                     })
                 ],
                 formatOptions: config.formatOptions,
-                addExtension: config.browserModuleResolution
+                addExtension
             });
             const contentTypeSnippetsBarrelExportPath: string = `${contentTypeSnippetsFolderPath}${barrelExportFilename}`;
             fs.writeFileSync(contentTypeSnippetsBarrelExportPath, contentTypeSnippetsBarrelCode);
@@ -214,11 +215,11 @@ export async function generateModelsAsync(config: IGenerateModelsConfig): Promis
                 filenames: [
                     ...taxonomiesResult.taxonomyFilenames.map((m) => {
                         const path = parse(m);
-                        return `./${path.name}${config.browserModuleResolution ? path.ext : ''}`;
+                        return `./${path.name}${addExtension ? path.ext : ''}`;
                     })
                 ],
                 formatOptions: config.formatOptions,
-                addExtension: config.browserModuleResolution
+                addExtension
             });
             const taxonomiesBarrelExportPath: string = `${taxonomiesFolderPath}${barrelExportFilename}`;
             fs.writeFileSync(taxonomiesBarrelExportPath, taxonomiesBarrelCode);
@@ -229,18 +230,18 @@ export async function generateModelsAsync(config: IGenerateModelsConfig): Promis
                 filenames: [
                     ...projectModelResult.filenames.map((m) => {
                         const path = parse(m);
-                        return `./${path.name}${config.browserModuleResolution ? path.ext : ''}`;
+                        return `./${path.name}${addExtension ? path.ext : ''}`;
                     })
                 ],
                 formatOptions: config.formatOptions,
-                addExtension: config.browserModuleResolution
+                addExtension
             });
             const projectBarrelExportPath: string = `${projectFolderPath}${barrelExportFilename}`;
             fs.writeFileSync(projectBarrelExportPath, projectBarrelCode);
             console.log(`Barrel export '${yellow(projectBarrelExportPath)}' created`);
 
             // main barrel
-            const optionalIndexFileName = config.browserModuleResolution ? 'index.ts' : '';
+            const optionalIndexFileName = addExtension ? 'index.ts' : '';
             const mainBarrelCode = commonHelper.getBarrelExportCode({
                 filenames: [
                     `./${projectFolderName}${optionalIndexFileName}`,
@@ -249,7 +250,7 @@ export async function generateModelsAsync(config: IGenerateModelsConfig): Promis
                     `./${taxonomiesFolderName}${optionalIndexFileName}`
                 ],
                 formatOptions: config.formatOptions,
-                addExtension: config.browserModuleResolution
+                addExtension: config.moduleResolution === 'browser'
             });
             const mainBarrelExportPath: string = `${outputDir}${barrelExportFilename}`;
             fs.writeFileSync(mainBarrelExportPath, mainBarrelCode);
